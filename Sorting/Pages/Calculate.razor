@@ -1,0 +1,98 @@
+﻿@page "/calculate"
+@using Sorting.Model
+
+<div class="container">
+    <h1>Calculate</h1>
+
+    <div class="row my-3">
+        <div class="col-lg-6">
+            <h3>Input</h3>
+            <ul>
+                @if (NumberList.Count != 0)
+                {
+                    @foreach (var x in NumberList)
+                    {
+                        <li>@x</li>
+                    }
+                }
+                else
+                {
+                    <li>empty</li>
+                }
+            </ul>
+        </div>
+        <div class="col-lg-6">
+            <h3>Output</h3>
+            <EditForm Model="NumberList" OnValidSubmit="CalculateOutput" class="form border rounded p-3 mb-3">
+                <label for="method" class="small text-info">Method</label>
+                <InputSelect class="form-control form-control-sm" id="movieGenre" @bind-Value="@Method">
+                    <option value="">Select sorting method ...</option>
+                    @foreach (var method in Enum.GetValues<EMethod>()) {
+                        <option value="@method">@method sort</option>
+                    }
+                </InputSelect>
+        
+                <button class="btn btn-primary btn-sm mt-2">Calculate</button>
+            </EditForm>
+            
+            @if (DisplayOutput)
+            {
+                <p><b>Calculated:</b> @DateTime</p>
+                <p><b>Time it took:</b> @TimeSpan ms</p>
+                <hr>
+                <ol>
+                    @if (OutputNumberList.Count != 0)
+                    {
+                        @foreach (var x in OutputNumberList)
+                        {
+                            <li>@x</li>
+                        }
+                    }
+                    else
+                    {
+                        <li>empty</li>
+                    }
+                </ol>
+            }
+        </div>
+    </div>
+    
+</div>
+
+@code {
+    public List<int> NumberList { get; set; } = Numbers.NumberList;
+
+    public List<int> OutputNumberList { get; set; } = new List<int>();
+    public string TimeSpan { get; set; }
+    public string DateTime { get; set; }
+    
+    public EMethod Method { get; set; }
+
+    public bool DisplayOutput { get; set; } = false;
+
+    void CalculateOutput()
+    {
+        DisplayOutput = true;
+
+        switch (Method)
+        {
+            case EMethod.Bubble:
+                OutputNumberList = Sort.Bubble(NumberList).Item1;
+                TimeSpan = Sort.Bubble(NumberList).Item2;
+                DateTime = Sort.Bubble(NumberList).Item3;
+                break;
+            case EMethod.Insertion:
+                OutputNumberList = Sort.Insertion(NumberList).Item1;
+                TimeSpan = Sort.Insertion(NumberList).Item2;
+                DateTime = Sort.Insertion(NumberList).Item3;
+                break;
+            case EMethod.Selection:
+                OutputNumberList = Sort.Selection(NumberList).Item1;
+                TimeSpan = Sort.Selection(NumberList).Item2;
+                DateTime = Sort.Selection(NumberList).Item3;
+                break;
+            default:
+                throw new Exception("Method not declared");
+        }
+    }
+}
