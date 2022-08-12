@@ -1,0 +1,96 @@
+﻿@page "/controlarray"
+@using Sorting.Model
+
+<div class="container">
+    <h1>Control Array</h1>
+    <button @onclick="Clear" class="btn btn-danger btn-sm mb-3">Clear</button>
+    <div class="row">
+        <div class="col-lg-6 mb-3">
+            <EditForm Model="NumberList" OnValidSubmit="Add" class="form border rounded p-3 h-100">
+                
+                <h3>Add Single Number</h3>
+        
+                <label for="number" class="small text-info">Number</label>
+                <InputNumber class="form-control form-control-sm" id="number" @bind-Value="@TempNumber"/>
+        
+                <button class="btn btn-primary btn-sm mt-2">Add</button>
+            </EditForm>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <EditForm Model="NumberList" OnValidSubmit="AddRange" class="form border rounded p-3 h-100">
+                    
+                <h3>Add Number Range</h3>
+                <p>Add <mark>;</mark> between each number and do not use breaks!</p>
+        
+                <label for="numbers" class="small text-info">Numbers</label>
+                <InputText class="form-control form-control-sm" id="numbers" placeholder="55;3;17;24;9;234" @bind-Value="@NumberRange"/>
+        
+                <button class="btn btn-primary btn-sm mt-2">Add Range</button>
+            </EditForm>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <EditForm Model="NumberList" OnValidSubmit="AddRandom" class="form border rounded p-3">
+                <h3>Add Random Numbers</h3>
+        
+                <label for="numberA" class="small text-info">Amount</label>
+                <InputNumber class="form-control form-control-sm" id="numberA" @bind-Value="@NumberAmount"/>
+        
+                <button class="btn btn-primary btn-sm mt-2">Add Random</button>
+            </EditForm>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <div class="border rounded px-3 pt-3">
+                <h3>Current Numbers</h3>
+                <ul>
+                    @if (NumberList.Count != 0)
+                    {
+                        @foreach (var x in NumberList)
+                        {
+                            <li>@x</li>
+                        }
+                    }
+                    else
+                    {
+                        <li>empty</li>
+                    }
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<int> NumberList { get; set; } = Numbers.NumberList;
+    
+    public int TempNumber { get; set; }
+    public int NumberAmount { get; set; }
+    public string NumberRange { get; set; }
+
+    void Add()
+    {
+        NumberList.Add(TempNumber);
+    }
+
+    void AddRange()
+    {
+        NumberList.AddRange(NumberRange.Split(';').Select(n => Convert.ToInt32(n)).ToList());
+    }
+
+    void Clear()
+    {
+        NumberList.Clear();
+    }
+
+    void AddRandom()
+    {
+        var rand = new Random();
+        var rtnlist = new List<int>();
+
+        for (int i = 0; i < NumberAmount; i++)
+        {
+            rtnlist.Add(rand.Next(1000));
+        }
+        NumberList.AddRange(rtnlist);
+    }
+}
